@@ -25,7 +25,8 @@ Welcome to BPL, the Blender Python Library Wrapper, an open-source project desig
 
 ### Configuration
 
-After installation, BPL does not require additional configuration to start using its features. However, users are encouraged to explore the BPL settings within the Blender Add-ons menu to customize the library behavior according to their preferences.
+After installation, BPL does not require additional configuration to start using its features.
+You can add a useful function as a plugin to Blender in the usual way.
 
 ## Usage
 
@@ -71,7 +72,7 @@ SceneComposer.setup_basic_scene(objects=[cube])
 
 ## Documentation
 
-For a comprehensive guide and API reference, please refer to the [BPL Documentation](https://github.com/your-repo/bpl/wiki). The documentation is continuously updated to reflect new features and improvements.
+For a comprehensive guide and API reference, please refer to the [BPL Documentation](https://github.com/sq5rix/BlenderPythonLibrary/wiki). The documentation is continuously updated to reflect new features and improvements.
 
 ## Contributing
 
@@ -87,3 +88,4 @@ BPL is licensed under the MIT License. See the [LICENSE](https://github.com/your
 - The Blender community, for their invaluable contributions and support.
 
 We hope BPL will enhance your Blender scripting experience by providing an easier and more intuitive way to create, animate, and compose in Blender. For questions, feedback, or support, please reach out through our GitHub repository.
+
