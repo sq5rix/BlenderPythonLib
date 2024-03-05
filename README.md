@@ -19,16 +19,18 @@ Welcome to BPL, the Blender Python Library Wrapper, an open-source project desig
 ### Installation
 
 1. Download the latest version of BPL from the [GitHub repository](https://github.com/sq5rix/BlenderPythonLibrary).
-2. Within Blender, navigate to `Edit > Preferences > Add-ons`.
-3. Click `Install` and select the BPL ZIP file or the main script file if you cloned the repository.
-4. In the Add-ons list, find and enable BPL by ticking the checkbox next to its name.
+2. Open Blender
+3. Copy the code in the Scripng scene
+4. Run code - some functions will requre clicking active object 
+
+pip install bpl is planned. 
 
 ### Configuration
 
 After installation, BPL does not require additional configuration to start using its features.
 You can add a useful function as a plugin to Blender in the usual way.
 
-## Usage
+## Usage 
 
 ### Creating a 3D Object
 
@@ -72,7 +74,7 @@ SceneComposer.setup_basic_scene(objects=[cube])
 
 ## Documentation
 
-For a comprehensive guide and API reference, please refer to the [BPL Documentation](https://github.com/sq5rix/BlenderPythonLibrary/wiki). The documentation is continuously updated to reflect new features and improvements.
+For a comprehensive guide and API reference, please refer to the [BPL Documentation](https://github.com/sq5rix/BlenderPythonLibrary/wiki). The documentation is planned it will be continuously updated to reflect new features and improvements.
 
 ## Contributing
 
