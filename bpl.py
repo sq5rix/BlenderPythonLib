@@ -62,3 +62,56 @@ def add_sun(x, y, z, strength=1.0):
     # Set the light strength
     sun.data.energy = strength
 
+
+def create_bsdf_emission_material(name="BSDF_Emission_Material", color=(1.0, 1.0, 1.0, 1.0), metallic=0.0, roughness=0.5, emission_strength=1.0, default_fac=0.0):
+    """
+    Creates a new material with a Principled BSDF and Emission shader mixed together.
+
+    Args:
+    - name: The name of the new material.
+    - color: The base color of the Principled BSDF shader.
+    - metallic: The metallic property of the Principled BSDF shader.
+    - roughness: The roughness property of the Principled BSDF shader.
+    - emission_strength: The strength of the Emission shader.
+    - default_fac: The default factor for the Mix Shader node.
+
+    Returns:
+    - The newly created material object.
+    """
+    # Create a new material
+    material = bpy.data.materials.new(name=name)
+    material.use_nodes = True
+    nodes = material.node_tree.nodes
+    links = material.node_tree.links
+
+    # Clear default nodes
+    nodes.clear()
+
+    # Create Principled BSDF shader node
+    principled_bsdf = nodes.new(type='ShaderNodeBsdfPrincipled')
+    principled_bsdf.location = (-200, 100)
+    principled_bsdf.inputs['Base Color'].default_value = color
+    principled_bsdf.inputs['Metallic'].default_value = metallic
+    principled_bsdf.inputs['Roughness'].default_value = roughness
+
+    # Create Emission shader node
+    emission = nodes.new(type='ShaderNodeEmission')
+    emission.location = (-200, -100)
+    emission.inputs['Strength'].default_value = emission_strength
+
+    # Create Mix Shader node
+    mix_shader = nodes.new(type='ShaderNodeMixShader')
+    mix_shader.location = (0, 0)
+    mix_shader.inputs['Fac'].default_value = default_fac
+
+    # Create Material Output node
+    material_output = nodes.new(type='ShaderNodeOutputMaterial')
+    material_output.location = (200, 0)
+
+    # Link nodes
+    links.new(principled_bsdf.outputs['BSDF'], mix_shader.inputs[1])
+    links.new(emission.outputs['Emission'], mix_shader.inputs[2])
+    links.new(mix_shader.outputs['Shader'], material_output.inputs['Surface'])
+
+    return material
+
