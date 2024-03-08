@@ -41,3 +41,24 @@ def add_camera(x, y, z):
     look_at(camera, Vector((0, 0, 0)))
 
 
+def add_sun(x, y, z, strength=1.0):
+    """
+    Adds a Sun lamp to the scene at the specified location, makes it face towards the origin (0, 0, 0),
+    and sets its light strength.
+
+    Args:
+    - x, y, z: The coordinates where the Sun lamp will be placed.
+    - strength: The light strength of the Sun lamp.
+    """
+    # Create the Sun lamp
+    bpy.ops.object.light_add(type='SUN', location=(x, y, z))
+    sun = bpy.context.object  # Get the newly created Sun lamp
+
+    # Calculate the direction vector from the Sun to the origin
+    direction = Vector((0, 0, 0)) - sun.location
+    # Point the Sun towards the origin
+    sun.rotation_euler = direction.to_track_quat('Z', 'Y').to_euler()
+
+    # Set the light strength
+    sun.data.energy = strength
+
