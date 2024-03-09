@@ -14,7 +14,7 @@ Welcome to BPL, the Blender Python Library Wrapper, an open-source project desig
 
 ### Prerequisites
 
-- Blender 2.83 or newer installed on your machine.
+- Blender 4.0 or newer installed on your machine.
 
 ### Installation
 
@@ -86,6 +86,8 @@ BPL is licensed under the MIT License. See the [LICENSE](https://github.com/your
 
 ## Acknowledgments
 
+- Special thanks to Ryan King for fantastic Blender tutorials on [YouTube](https://youtube.com/@RyanKingArt?si=wmYyGDFKGZ-_FPmM)
+- Shoutout and thanks to Victor Stepano for opening up scripting in Blender [YouTube](https://youtube.com/@CGPython?si=Y_rGrNoMJbe141b1)
 - The Blender Foundation, for developing and maintaining Blender.
 - The Blender community, for their invaluable contributions and support.
 
