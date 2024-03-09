@@ -49,38 +49,16 @@ def update_camera_focal_length(camera, target_object, frame, max_frame_coverage=
     # Update the camera's focal length
     camera.data.lens = new_focal_length
 
-def setup_camera_rig(curve_name, target_object_name, num_frames, fps, initial_focal_length=50, max_frame_coverage=0.7):
+def setup_camera_rig(curve_name, target_object_name, initial_focal_length=50):
     """
-    Enhances the initial setup_camera_rig function with dynamic focal length adjustment
-    to keep the target object within a specified frame coverage.
-
-    Additional Args:
-    - max_frame_coverage: The maximum percentage of the frame's width or height the target object should occupy.
-    """
-    # Previous setup_camera_rig implementation...
-    
-    # Inside the loop that iterates through each frame, call update_camera_focal_length:
-    for frame in range(1, num_frames + 1):
-        # Existing operations to animate the camera...
-        
-        # Update the camera's focal length for the current frame
-        update_camera_focal_length(camera, target_object, frame, max_frame_coverage)
-        
-        # Keyframe the new focal length
-        camera.data.keyframe_insert(data_path="lens", frame=frame)
-
-# Example usage remains the same...
-
-
-def setup_camera_rig(curve_name, target_object_name, num_frames, fps, initial_focal_length=50):
-    """
-    Sets up a camera rig that moves along a Bézier curve focusing on a specified object.
+    Sets up a camera rig that moves along a Bézier curve focusing on a specified object,
+    adjusting the camera's focal length to keep the target object occupying roughly 70%
+    of the frame width or height, depending on its orientation. The animation end frame
+    is taken from the current scene settings.
 
     Args:
     - curve_name (str): The name of the Bézier curve object.
     - target_object_name (str): The name of the object to focus on.
-    - num_frames (int): The total number of frames for the animation.
-    - fps (int): The frames per second value for the animation.
     - initial_focal_length (float): The initial focal length of the camera.
     """
     
@@ -91,7 +69,7 @@ def setup_camera_rig(curve_name, target_object_name, num_frames, fps, initial_fo
         print("Curve or target object does not exist.")
         return
     
-    # Create a camera if it doesn't exist
+    # Create or retrieve the camera
     if "CameraRig" not in bpy.data.objects:
         bpy.ops.object.camera_add()
         camera = bpy.context.object
@@ -99,38 +77,50 @@ def setup_camera_rig(curve_name, target_object_name, num_frames, fps, initial_fo
     else:
         camera = bpy.data.objects["CameraRig"]
     
-    # Set camera data properties
-    camera.data.lens = initial_focal_length
     camera.data.sensor_fit = 'HORIZONTAL'
     
-    # Set the animation start and end
-    bpy.context.scene.frame_start = 1
-    bpy.context.scene.frame_end = num_frames
-    bpy.context.scene.render.fps = fps
+    # Use scene's current frame range
+    start_frame = bpy.context.scene.frame_start
+    end_frame = bpy.context.scene.frame_end
     
-    # Create a follow path constraint and attach the camera to the curve
     follow_path_constraint = camera.constraints.new(type='FOLLOW_PATH')
     follow_path_constraint.target = curve
     follow_path_constraint.use_curve_follow = True
-    bpy.ops.constraint.followpath_path_animate(constraint="Follow Path", owner='OBJECT', frame_start=1, length=num_frames)
+    bpy.ops.constraint.followpath_path_animate(constraint="Follow Path", owner='OBJECT', frame_start=start_frame, length=end_frame - start_frame + 1)
     
-    # Make the camera look at the target object by adding a Track To constraint
     track_to_constraint = camera.constraints.new(type='TRACK_TO')
     track_to_constraint.target = target_object
     track_to_constraint.track_axis = 'TRACK_NEGATIVE_Z'
     track_to_constraint.up_axis = 'UP_Y'
     
-    # Animate focal length and DOF distance based on the distance to the target object
-    for frame in range(1, num_frames + 1):
+    # Calculate and animate the focal length
+    for frame in range(start_frame, end_frame + 1):
         bpy.context.scene.frame_set(frame)
-        distance = (camera.location - target_object.location).length
-        camera.data.lens = initial_focal_length + distance * 0.1  # Example focal length adjustment
-        camera.data.dof.focus_distance = distance
         
+        # Calculate distance to target object and adjust focal length to keep object within frame
+        camera_loc = camera.matrix_world.translation
+        target_loc = target_object.matrix_world.translation
+        direction = (target_loc - camera_loc).normalized()
+        distance = (target_loc - camera_loc).length
+
+        # Calculate dimensions of the target object
+        dimensions = target_object.dimensions
+        max_dimension = max(dimensions.x, dimensions.y, dimensions.z)
+        
+        # Assuming a sensor width of 36mm (default in Blender) and frame aspect ratio to determine whether to use width or height
+        sensor_width = camera.data.sensor_width
+        aspect_ratio = bpy.context.scene.render.resolution_x / bpy.context.scene.render.resolution_y
+        frame_dimension = sensor_width if aspect_ratio >= 1 else sensor_width / aspect_ratio
+        
+        # Calculate focal length to fit the object within 70% of the frame's largest dimension
+        scale_factor = 0.7  # Target to occupy 70% of the frame
+        focal_length = (distance * initial_focal_length) / (max_dimension / frame_dimension * scale_factor)
+        camera.data.lens = focal_length
+
         camera.data.keyframe_insert(data_path="lens", frame=frame)
-        camera.data.keyframe_insert(data_path="dof.focus_distance", frame=frame)
 
     print("Camera rig setup complete.")
 
 # Example usage
-setup_camera_rig("BezierCurve", "Cube", num_frames=120, fps=24, initial_focal_length=35)
+setup_camera_rig("BezierCurve", "Cube", initial_focal_length=35)
+
