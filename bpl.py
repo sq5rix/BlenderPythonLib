@@ -115,3 +115,23 @@ def create_bsdf_emission_material(name="BSDF_Emission_Material", color=(1.0, 1.0
 
     return material
 
+
+def set_mix_shader_fac(material, fac_value):
+    """
+    Sets the Fac value of the Mix Shader node in the given material.
+
+    Args:
+    - material: The material object to modify.
+    - fac_value: The float value to set for the Mix Shader's Fac factor.
+    """
+    if material.use_nodes:
+        # Try to find the Mix Shader node in the material's node tree
+        mix_shader = next(
+            (node for node in material.node_tree.nodes if node.type == 'MIX_SHADER'), None
+        )
+
+        if mix_shader:
+            # Set the Fac value
+            mix_shader.inputs['Fac'].default_value = fac_value
+
+
