@@ -3,6 +3,44 @@ import bpy
 H_RES = 1024
 RES = 400
 
+import bpy
+
+class RenderSettingsManager:
+    def __init__(self):
+        """Initialize the RenderSettingsManager by reading current render settings."""
+        self.get_render()
+
+    def get_render(self):
+        """Reads the current render settings from the scene and stores them in instance variables."""
+        scene = bpy.context.scene
+        render = scene.render
+        
+        self.engine = scene.render.engine
+        self.resolution_x = render.resolution_x
+        self.resolution_y = render.resolution_y
+        self.resolution_percentage = render.resolution_percentage
+        self.use_denoising = scene.cycles.use_denoising
+        self.file_format = scene.render.image_settings.file_format
+        # Add more parameters as needed
+
+    def set_render(self, engine='CYCLES', resolution_x=2048, resolution_y=1024, resolution_percentage=400,
+                   use_denoising=True, file_format='HDR'):
+        """Sets the render settings for the scene based on the provided parameters."""
+        scene = bpy.context.scene
+        render = scene.render
+
+        scene.render.engine = engine
+        render.resolution_x = resolution_x
+        render.resolution_y = resolution_y
+        render.resolution_percentage = resolution_percentage
+        scene.cycles.use_denoising = use_denoising
+        scene.render.image_settings.file_format = file_format
+        # Apply additional settings as needed
+
+        # Update instance variables to reflect the changes
+        self.get_render()
+
+
 def add_denoise_node():
     """Adds a Denoise node to the compositor with default values."""
     # Enable use of nodes in the compositor
@@ -117,5 +155,4 @@ def render_scene_and_save_image(output_file_name='Blender/pano'):
     # Render the scene
     bpy.ops.render.render(write_still=True)  # 'write_still' ensures the File Output node writes the file
 
-# Example usage
 render_scene_and_save_image()
