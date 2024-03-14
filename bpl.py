@@ -135,3 +135,32 @@ def set_mix_shader_fac(material, fac_value):
             mix_shader.inputs['Fac'].default_value = fac_value
 
 
+def create_sphere_with_material(material, radius=1.0, location=(0, 0, 0), subdivisions=2, name="SphereWithMaterial"):
+    """
+    Creates a sphere and applies the given material to it.
+
+    Args:
+    - material: The material to apply to the sphere.
+    - radius: The radius of the sphere.
+    - location: The location to place the sphere at.
+    - subdivisions: The number of subdivisions for the Icosphere.
+    - name: The name of the new sphere object.
+
+    Returns:
+    - The newly created sphere object.
+    """
+    # Create an Icosphere
+    bpy.ops.mesh.primitive_ico_sphere_add(radius=radius, subdivisions=subdivisions, location=location)
+
+    # Get the newly created Icosphere
+    sphere = bpy.context.object
+    sphere.name = name
+
+    # Ensure the sphere has a material slot and apply the material
+    if len(sphere.data.materials) == 0:
+        sphere.data.materials.append(material)
+    else:
+        sphere.data.materials[0] = material
+
+    return sphere
+
