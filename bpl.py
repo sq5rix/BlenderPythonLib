@@ -164,3 +164,49 @@ def create_sphere_with_material(material, radius=1.0, location=(0, 0, 0), subdiv
 
     return sphere
 
+
+def create_icosphere_grid(n, r, d, subs, name):
+    """
+    Creates an n x n x n grid of Icospheres with increased subdivisions and applies an existing material named 'SimpleStar' to them.
+
+    Args:
+    - n: The number of Icospheres along each axis.
+    - r: Radius of each Icosphere.
+    - d: Distance between the centers of adjacent Icospheres.
+    - subdivisions: The subdivision level for each Icosphere.
+    """
+    spheres = []
+    materials = []
+
+    # Calculate the start position so that the grid is centered at the origin
+    start_pos = -(n - 1) * d / 2
+
+    # Loop over each dimension
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                # Calculate the position for the current Icosphere
+                x = start_pos + i * d
+                y = start_pos + j * d
+                z = start_pos + k * d
+
+                # Example usage:
+                new_material = create_bsdf_emission_material(
+                    name="CustomMaterial",
+                    color=(0.9, 0.1, 0.1, 1.0),  # Reddish color
+                    metallic=0.3,
+                    roughness=0.15,
+                    emission_strength=9.9,
+                    default_fac=0.0
+                )
+
+                # Create an sphere at the calculated position
+                ico_sphere = create_sphere_with_material(
+                    new_material, radius=r,
+                    location=(x, y, z), subdivisions=subs,
+                    name=name+str(x)+str(y)+str(z)
+                )
+                spheres.append(ico_sphere)
+                materials.append(new_material)
+    return spheres, materials
+
