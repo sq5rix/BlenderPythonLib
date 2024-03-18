@@ -210,3 +210,44 @@ def create_icosphere_grid(n, r, d, subs, name):
                 materials.append(new_material)
     return spheres, materials
 
+
+def create_list_activated_points(original_list, step):
+    """
+    Processes a list of objects based on specified rules and returns a modified copy.
+
+    Args:
+    - original_list: The list of objects to process.
+    - step: The base step value used to determine the skip count.
+
+    Returns:
+    - A modified copy of the original list based on the processing rules.
+    """
+    if not original_list:
+        return []
+
+    # Initialize the resulting list with the first object
+    result_list = [original_list[0]]
+    i = 0  # Start with the first object
+
+    while i < len(original_list) - 1:
+        rand_choice = random.randint(0, 2)  # Get a random number (0, 1, or 2)
+
+        if rand_choice == 0:
+            # Copy the next object
+            i += 1
+        elif rand_choice == 1:
+            # Skip step-1 objects
+            i += step
+        elif rand_choice == 2:
+            # Skip step^2-1 objects
+            i += step**2
+
+        # Check if the index is within the bounds of the list
+        if i < len(original_list):
+            result_list.append(original_list[i])
+        else:
+            # If the index goes beyond the list, stop the loop
+            break
+
+    return result_list
+
