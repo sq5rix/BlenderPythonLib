@@ -251,3 +251,47 @@ def create_list_activated_points(original_list, step):
 
     return result_list
 
+def animate_fac_for_materials(materials, start_frame, step):
+    """
+    Animate the 'Fac' property of the Mix Shader node in each material. Sets 'Fac' to 0.0 at frame 0,
+    then to 1.0 for each material starting from 'start_frame', incrementing by 'step'. The interpolation
+    type for these keyframes is set to 'CONSTANT' for a step-like transition.
+
+    Args:
+    - materials: A list of Blender material objects.
+    - start_frame: The starting frame for the animation.
+    - step: The step between keyframes for successive materials.
+    """
+    bpy.context.scene.frame_set(0)  # Start at frame 0
+
+    for index, material in enumerate(materials):
+        if not material.use_nodes:
+            print(f"Material '{material.name}' does not use nodes.")
+            continue
+
+        mix_shader = next((node for node in material.node_tree.nodes if node.type == 'MIX_SHADER'), None)
+        if not mix_shader:
+            print(f"No Mix Shader found in material '{material.name}'.")
+            continue
+
+        # Set 'Fac' to 0.0 at frame 0 for all materials
+        mix_shader.inputs['Fac'].default_value = 0.0
+        mix_shader.inputs['Fac'].keyframe_insert(data_path="default_value", frame=0)
+
+        # Find the F-Curve for the 'Fac' property and set interpolation to 'CONSTANT'
+        fcurve = material.node_tree.animation_data.action.fcurves.find('nodes["' + mix_shader.name + '"].inputs[0].default_value')
+        if fcurve:  # Check if the F-Curve exists
+            for kf in fcurve.keyframe_points:
+                kf.interpolation = 'CONSTANT'
+
+        # Set 'Fac' to 1.0 at the specified frame for each material
+        frame = start_frame + (index * step)
+        bpy.context.scene.frame_set(frame)  # Go to the specified frame
+        mix_shader.inputs['Fac'].default_value = 1.0
+        mix_shader.inputs['Fac'].keyframe_insert(data_path="default_value", frame=frame)
+
+        # Again, set interpolation to 'CONSTANT' for the new keyframe
+        if fcurve:  # Ensure the F-Curve still exists
+            for kf in fcurve.keyframe_points:
+                kf.interpolation = 'CONSTANT'
+
