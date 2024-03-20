@@ -295,3 +295,19 @@ def animate_fac_for_materials(materials, start_frame, step):
             for kf in fcurve.keyframe_points:
                 kf.interpolation = 'CONSTANT'
 
+n = 5  # Grid size
+r = 0.8  # Icosphere radius
+d = 3  # Distance between the centers of adjacent Icospheres
+start_frame=2
+subdivisions = 4  # Subdivision level to increase mesh density
+
+# Call the function to create the grid
+clear_scene()
+add_camera(25, -35, 20)
+add_sun(60, 60, 60, 10)
+add_sun(-30, -80, -30, 10)
+add_sun(30, -80, 30, 10)
+_, mats = create_icosphere_grid(n, r, d, subdivisions,"SimpleStar")
+modified_materials = create_list_activated_points(mats, n)
+animate_fac_for_materials(modified_materials , start_frame=start_frame, step=1)
+
