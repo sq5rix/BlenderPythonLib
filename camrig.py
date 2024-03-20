@@ -1,48 +1,68 @@
 import bpy
+from mathutils import Vector
 
-def animate_camera_along_path(camera_name, path_name, start_frame, end_frame):
-    # Get the camera and path objects
+def update_camera_focal_length(camera, target_object, scale_factor=0.7):
+    """
+    Updates the camera's focal length based on the target object's size and distance,
+    aiming to keep the target object's largest dimension within a specified percentage
+    of the frame's width or height.
+
+    Args:
+    - camera: The camera object to update.
+    - target_object: The target object the camera focuses on.
+    - scale_factor (float): Determines how much of the frame's width or height
+      the target object should occupy. Defaults to 0.7 (70%).
+    """
+    camera_loc = camera.matrix_world.translation
+    target_loc = target_object.matrix_world.translation
+    distance = (target_loc - camera_loc).length
+
+    # Calculate dimensions of the target object
+    dimensions = target_object.dimensions
+    max_dimension = max(dimensions.x, dimensions.y, dimensions.z)
+
+    # Assuming a sensor width of 36mm (default in Blender) and frame aspect ratio
+    sensor_width = camera.data.sensor_width
+    aspect_ratio = bpy.context.scene.render.resolution_x / bpy.context.scene.render.resolution_y
+    frame_dimension = sensor_width if aspect_ratio >= 1 else sensor_width / aspect_ratio
+
+    # Calculate focal length to fit the object within the specified scale factor of the frame
+    focal_length = (distance * camera.data.lens) / (max_dimension / frame_dimension * scale_factor)
+    camera.data.lens = focal_length
+
+def setup_camera_rig(camera_name, curve_name, target_object_name, initial_focal_length=50):
+    """
+    Sets up a camera rig that moves along a Bézier curve focusing on a specified object,
+    adjusting the camera's focal length dynamically.
+
+    Args:
+    - curve_name (str): The name of the Bézier curve object.
+    - target_object_name (str): The name of the object to focus on.
+    - initial_focal_length (float): The initial focal length of the camera.
+    """
+    curve = bpy.data.objects.get(curve_name)
+    target_object = bpy.data.objects.get(target_object_name)
+    if not curve or not target_object:
+        print("Curve or target object does not exist.")
+        return
+
     camera = bpy.data.objects.get(camera_name)
-    path = bpy.data.objects.get(path_name)
+    camera.data.sensor_fit = 'HORIZONTAL'
+    camera.data.lens = initial_focal_length
+    camera.location = [0,0,0]
+    camera.location = [0,0,0]
 
-    if not camera:
-        print(f"Camera '{camera_name}' not found.")
-        return
+    camera.constraints.clear()
     
-    if not path:
-        print(f"Path '{path_name}' not found.")
-        return
+    follow_path_constraint = camera.constraints.new(type='FOLLOW_PATH')
+    follow_path_constraint.target = curve
+    follow_path_constraint.use_curve_follow = True 
 
-    # Add or find the Follow Path constraint on the camera
-    follow_path_constraint = next((c for c in camera.constraints if c.type == 'FOLLOW_PATH'), None)
-    if not follow_path_constraint:
-        follow_path_constraint = camera.constraints.new(type='FOLLOW_PATH')
+    track_constrain = camera.constraints.new(type='TRACK_TO')
+    track_constrain.target = target_object
+    
+    print("Camera rig setup complete.")
+S
+# Example usage
+setup_camera_rig("Camera", "CamPath", "Cube", initial_focal_length=80)
 
-    follow_path_constraint.target = path
-    follow_path_constraint.use_curve_follow = True
-    follow_path_constraint.forward_axis = 'FORWARD_Y'
-    follow_path_constraint.up_axis = 'UP_Z'
-
-    # Clear any existing animation on the camera or path
-    camera.animation_data_clear()
-    path.animation_data_clear()
-
-    # Set the path to be used for animation
-    path.data.use_path = True
-    path.data.path_duration = end_frame - start_frame
-
-    # Animate the offset factor of the Follow Path constraint to move the camera along the path
-    camera.constraints.update()
-    follow_path_constraint.offset_factor = 0.0
-    follow_path_constraint.keyframe_insert(data_path="offset_factor", frame=start_frame)
-    follow_path_constraint.offset_factor = 1.0
-    follow_path_constraint.keyframe_insert(data_path="offset_factor", frame=end_frame)
-
-    print(f"Camera '{camera_name}' is animated along the path '{path_name}' from frame {start_frame} to {end_frame}.")
-
-# Example usage:
-camera_name = "Camera"
-path_name = "CamPath"
-start_frame = 1
-end_frame = 800
-animate_camera_along_path(camera_name, path_name, start_frame, end_frame)
