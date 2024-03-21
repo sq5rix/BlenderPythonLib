@@ -53,16 +53,19 @@ def setup_camera_rig(camera_name, curve_name, target_object_name, initial_focal_
     camera.location = [0,0,0]
 
     camera.constraints.clear()
-    
+
     follow_path_constraint = camera.constraints.new(type='FOLLOW_PATH')
     follow_path_constraint.target = curve
-    follow_path_constraint.use_curve_follow = True 
+    follow_path_constraint.use_curve_follow = True
 
     track_constrain = camera.constraints.new(type='TRACK_TO')
     track_constrain.target = target_object
-    
+
     print("Camera rig setup complete.")
-S
-# Example usage
-setup_camera_rig("Camera", "CamPath", "Cube", initial_focal_length=80)
+
+def main():
+    setup_camera_rig("Camera", "CamPath", "Cube", initial_focal_length=80)
+
+if __name__ == "__main__":
+    main()
 
