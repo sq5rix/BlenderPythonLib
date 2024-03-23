@@ -21,3 +21,8 @@ def add_front_spotlight(object_size, collection_name="StudioLights"):
     for col in light.users_collection:
         col.objects.unlink(light)
     collection.objects.link(light)
+    
+    
+main_object_size = 3  # Assuming a 3x3x3 meter object
+add_front_spotlight(main_object_size)
+
