@@ -1,3 +1,16 @@
+import bpl
+
+def create_area_light(name, location, size, energy, color):
+    """Utility function to create an area light."""
+    bpy.ops.object.light_add(type='AREA', location=location)
+    light = bpy.context.object
+    light.data.shape = 'RECTANGLE'
+    light.name = name
+    light.data.size = size
+    light.data.energy = energy
+    light.data.color = color
+    return light
+
 def add_front_spotlight(object_size, collection_name="StudioLights"):
     """Adds a front spotlight to light the main object."""
     # Calculate the spotlight's location based on the main object's size
@@ -21,8 +34,8 @@ def add_front_spotlight(object_size, collection_name="StudioLights"):
     for col in light.users_collection:
         col.objects.unlink(light)
     collection.objects.link(light)
-    
-    
+
+
 main_object_size = 3  # Assuming a 3x3x3 meter object
 add_front_spotlight(main_object_size)
 
