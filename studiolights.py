@@ -1,5 +1,20 @@
 import bpl
 
+
+def delete_studio_lights_and_collection(collection_name="StudioLights"):
+    """Deletes all lights in the specified collection and the collection itself."""
+    collection = bpy.data.collections.get(collection_name)
+    if collection:
+        # Iterate over a copy of the collection's objects list to avoid modification during iteration
+        for obj in collection.objects[:]:
+            if obj.type == 'LIGHT':  # Ensure we only delete light objects
+                bpy.data.objects.remove(obj, do_unlink=True)
+        # Once all lights are deleted, remove the collection
+        bpy.data.collections.remove(collection)
+    else:
+        print(f"Collection '{collection_name}' not found.")
+
+
 def create_area_light(name, location, size, energy, color):
     """Utility function to create an area light."""
     bpy.ops.object.light_add(type='AREA', location=location)
