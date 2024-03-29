@@ -60,4 +60,26 @@ pipe = create_l_shaped_pipe(plane_size=2, bevel_segments=8, curve_depth=0.25, cu
 # Initial Plane Creation: 
 # Starts by creating a plane of the specified size.
 # Edit Mode Operations: 
-# Enters edit mode to delete edges and create an L-shape by beveling a vertex.Curve Conversion: Converts the edited mesh to a curve for further modification.Curve Properties: Adjusts the curve to have depth (thickness) and resolution, giving it the appearance of a pipe.Final Conversion to Mesh: Converts the curve back into a mesh and renames the object to "Pipe".Note:The deletion step has been set to remove edges, which might not directly lead to an L-shape. To ensure an L-shape, you might need to manually select and delete specific edges or vertices in Blender's UI, or adjust the deletion script logic to target specific edges based on their indices.Bevel and curve properties (bevel_segments, curve_depth, curve_resolution) can be adjusted to achieve the desired appearance for the pipe.This function provides a scripted approach to creating complex shapes in Blender, demonstrating how to combine mesh and curve operations within a single workflow.
+# Enters edit mode to delete edges and create 
+# an L-shape by beveling a vertex.Curve 
+# Conversion: Converts the edited mesh 
+# to a curve for further modification.Curve 
+# Properties: Adjusts the curve to have depth 
+# (thickness) and resolution, giving it the 
+# appearance of a pipe.
+# Final Conversion to Mesh: Converts the curve 
+# back into a mesh and renames the object to "Pipe".
+# Note:The deletion step has been set to remove 
+# edges, which might not directly lead to an 
+# L-shape. To ensure an L-shape, you might 
+# need to manually select and delete specific 
+# edges or vertices in Blender's UI, or 
+# adjust the deletion script logic to target 
+# specific edges based on their indices.
+# Bevel and curve properties (bevel_segments, 
+# curve_depth, curve_resolution) can be adjusted 
+# to achieve the desired appearance for the pipe.
+# This function provides a scripted approach to 
+# creating complex shapes in Blender, 
+# demonstrating how to combine mesh and curve 
+# operations within a single workflow.
