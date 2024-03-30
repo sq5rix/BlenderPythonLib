@@ -14,6 +14,14 @@ def delete_studio_lights_and_collection(collection_name="StudioLights"):
     else:
         print(f"Collection '{collection_name}' not found.")
 
+def add_key_light(object_size):
+    """Adds a key light to the scene."""
+    location = (-object_size, object_size, 5)
+    size = 3  # Diameter for a circular light
+    energy = 1000  # Adjust based on your scene's scale
+    color = (1, 1, 1)  # White
+    light = create_area_light("Key Light", location, 1, energy, color)
+    set_circular_area_light(light, size)
 
 def create_area_light(name, location, size, energy, color):
     """Utility function to create an area light."""
