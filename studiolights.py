@@ -1,6 +1,5 @@
 import bpl
 
-
 def delete_studio_lights_and_collection(collection_name="StudioLights"):
     """Deletes all lights in the specified collection and the collection itself."""
     collection = bpy.data.collections.get(collection_name)
@@ -33,6 +32,16 @@ def create_area_light(name, location, size, energy, color):
     light.data.energy = energy
     light.data.color = color
     return light
+
+def add_rim_light(object_size):
+    """Adds a rim light to the scene."""
+    location = (0, -2 * object_size, 2)
+    size = 2  # Smaller than key light
+    energy = 750  # Adjust the energy as needed
+    color = (1, 0.8, 0.5)  # Slightly orange
+    light = create_area_light("Rim Light", location, 1, energy, color)
+    set_circular_area_light(light, size)
+    
 
 def add_front_spotlight(object_size, collection_name="StudioLights"):
     """Adds a front spotlight to light the main object."""
