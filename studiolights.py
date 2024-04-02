@@ -1,73 +1,88 @@
-import bpl
+import bpy
 
-def delete_studio_lights_and_collection(collection_name="StudioLights"):
-    """Deletes all lights in the specified collection and the collection itself."""
-    collection = bpy.data.collections.get(collection_name)
-    if collection:
-        # Iterate over a copy of the collection's objects list to avoid modification during iteration
-        for obj in collection.objects[:]:
-            if obj.type == 'LIGHT':  # Ensure we only delete light objects
-                bpy.data.objects.remove(obj, do_unlink=True)
-        # Once all lights are deleted, remove the collection
-        bpy.data.collections.remove(collection)
-    else:
-        print(f"Collection '{collection_name}' not found.")
+class StudioLightsSetup:
+    def __init__(self, main_object_size, collection_name="StudioLights"):
+        self.main_object_size = main_object_size
+        self.collection = self.ensure_collection(collection_name)
 
-def add_key_light(object_size):
-    """Adds a key light to the scene."""
-    location = (-object_size, object_size, 5)
-    size = 3  # Diameter for a circular light
-    energy = 1000  # Adjust based on your scene's scale
-    color = (1, 1, 1)  # White
-    light = create_area_light("Key Light", location, 1, energy, color)
-    set_circular_area_light(light, size)
+    def ensure_collection(self, collection_name):
+        if collection_name not in bpy.data.collections:
+            new_collection = bpy.data.collections.new(collection_name)
+            bpy.context.scene.collection.children.link(new_collection)
+        return bpy.data.collections[collection_name]
 
-def create_area_light(name, location, size, energy, color):
-    """Utility function to create an area light."""
-    bpy.ops.object.light_add(type='AREA', location=location)
-    light = bpy.context.object
-    light.data.shape = 'RECTANGLE'
-    light.name = name
-    light.data.size = size
-    light.data.energy = energy
-    light.data.color = color
-    return light
+    def create_light(self, light_type, name, location, size, energy, color, spot_size=None, spot_blend=None):
+        bpy.ops.object.light_add(type=light_type, location=location)
+        light = bpy.context.object
+        light.name = name
+        light.data.energy = energy
+        light.data.color = color
 
-def add_rim_light(object_size):
-    """Adds a rim light to the scene."""
-    location = (0, -2 * object_size, 2)
-    size = 2  # Smaller than key light
-    energy = 750  # Adjust the energy as needed
-    color = (1, 0.8, 0.5)  # Slightly orange
-    light = create_area_light("Rim Light", location, 1, energy, color)
-    set_circular_area_light(light, size)
-    
+        if light_type == 'AREA':
+            light.data.shape = 'DISK'
+            light.data.size = size
+        elif light_type == 'SPOT':
+            light.data.spot_size = spot_size
+            light.data.spot_blend = spot_blend
+            light.data.show_cone = True
 
-def add_front_spotlight(object_size, collection_name="StudioLights"):
-    """Adds a front spotlight to light the main object."""
-    # Calculate the spotlight's location based on the main object's size
-    location = (0, -object_size * 2, object_size / 2)  # Adjust multiplier for desired distance
+        # Remove light from all collections it was added to, then link to the specified collection
+        for col in light.users_collection:
+            col.objects.unlink(light)
+        self.collection.objects.link(light)
+        return light
 
-    # Create the spotlight
-    bpy.ops.object.light_add(type='SPOT', location=location)
-    light = bpy.context.object
-    light.name = "Front Spotlight"
-    light.data.energy = 500  # Adjust energy as needed
-    light.data.color = (1, 1, 1)  # White, adjust color as needed
-    light.data.spot_size = 1.0  # Adjust spot size (radians) as needed
-    light.data.spot_blend = 0.1  # Adjust spot blend (softness) as needed
-    light.data.show_cone = True  # Optionally show the light's cone in the viewport
+    def add_key_light(self):
+        location = (-self.main_object_size, self.main_object_size, 5)
+        self.create_light("AREA", "Key Light", location, 1.5, 1000, (1, 1, 1))
 
-    # Point the light towards the main object (0,0,0)
-    light.rotation_euler[0] = 1.5708  # 90 degrees in radians
+    def add_fill_light(self):
+        location = (2 * self.main_object_size, -self.main_object_size, 2)
+        self.create_light("AREA", "Fill Light", location, 2, 500, (0.8, 0.8, 1))
 
-    # Ensure the light is added to the specified collection
-    collection = ensure_collection(collection_name)
-    for col in light.users_collection:
-        col.objects.unlink(light)
-    collection.objects.link(light)
+    def add_rim_light(self):
+        location = (0, -2 * self.main_object_size, 2)
+        self.create_light("AREA", "Rim Light", location, 1, 750, (1, 0.8, 0.5))
+
+    def add_front_spotlight(self):
+        location = (0, -self.main_object_size * 2, self.main_object_size / 2)
+        self.create_light("SPOT", "Front Spotlight", location, 0, 500, (1, 1, 1), spot_size=1.0, spot_blend=0.1)
 
 
-main_object_size = 3  # Assuming a 3x3x3 meter object
-add_front_spotlight(main_object_size)
+class StudioLightsSetupPanel(bpy.types.Panel):
+    bl_label = "Studio Lights Setup"
+    bl_idname = "OBJECT_PT_studio_lights"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Tool'
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("object.setup_studio_lights", text="Add Studio Lights")
+
+class OBJECT_OT_SetupStudioLights(bpy.types.Operator):
+    bl_idname = "object.setup_studio_lights"
+    bl_label = "Setup Studio Lights"
+    bl_description = "Setup studio lighting based on the selected object size"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        main_object_size = 3  # Example size, adjust as needed
+        studio_lights = StudioLightsSetup(main_object_size)
+        studio_lights.add_key_light()
+        studio_lights.add_fill_light()
+        studio_lights.add_rim_light()
+        studio_lights.add_front_spotlight()
+        return {'FINISHED'}
+
+def register():
+    bpy.utils.register_class(OBJECT_OT_SetupStudioLights)
+    bpy.utils.register_class(StudioLightsSetupPanel)
+
+def unregister():
+    bpy.utils.unregister_class(OBJECT_OT_SetupStudioLights)
+    bpy.utils.unregister_class(StudioLightsSetupPanel)
+
+if __name__ == "__main__":
+    register()
 
