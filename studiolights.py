@@ -1,3 +1,10 @@
+bl_info = {
+    "name": "Studio Lights",
+    "blender": (2, 80, 0),
+    "category": "Scene",
+}
+
+
 import bpy
 
 class StudioLightsSetup:
@@ -55,6 +62,7 @@ class StudioLightsSetupPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'Tool'
+    bl_info = 'Studio Lights'
 
     def draw(self, context):
         layout = self.layout
@@ -62,9 +70,10 @@ class StudioLightsSetupPanel(bpy.types.Panel):
 
 class OBJECT_OT_SetupStudioLights(bpy.types.Operator):
     bl_idname = "object.setup_studio_lights"
-    bl_label = "Setup Studio Lights"
+    bl_label = "Studio Lights"
     bl_description = "Setup studio lighting based on the selected object size"
     bl_options = {'REGISTER', 'UNDO'}
+    bl_info = 'Studio Lights'
 
     def execute(self, context):
         main_object_size = 3  # Example size, adjust as needed
