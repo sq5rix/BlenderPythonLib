@@ -52,7 +52,7 @@ class StudioLightsSetup:
         self.create_light("AREA", "Rim Light", location, 1, 750, (1, 0.8, 0.5))
 
     def add_front_spotlight(self):
-        location = (0, -self.main_object_size * 2, self.main_object_size / 2)
+        location = (0, self.main_object_size * 2, self.main_object_size / 2)
         self.create_light("SPOT", "Front Spotlight", location, 0, 500, (1, 1, 1), spot_size=1.0, spot_blend=0.1)
 
 
