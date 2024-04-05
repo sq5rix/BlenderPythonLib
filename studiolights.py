@@ -8,9 +8,9 @@ bl_info = {
 import bpy
 
 class StudioLightsSetup:
-    def __init__(self, main_object_size, collection_name="StudioLights"):
-        self.main_object_size = main_object_size
+    def __init__(self, collection_name="StudioLights"):
         self.collection = self.ensure_collection(collection_name)
+        self.main_object_size = calculate_scene_sphere_radius
 
     def ensure_collection(self, collection_name):
         if collection_name not in bpy.data.collections:
@@ -44,8 +44,8 @@ class StudioLightsSetup:
         self.create_light("AREA", "Key Light", location, 1.5, 1000, (1, 1, 1))
 
     def add_fill_light(self):
-        location = (2 * self.main_object_size, -self.main_object_size, 2)
-        self.create_light("AREA", "Fill Light", location, 2, 500, (0.8, 0.8, 1))
+        location = (2 * self.main_object_size, -self.main_object_size, self.light_height)
+        self.create_light("AREA", "Fill Light", location, -2, 500, (0.8, 0.8, 1))
 
     def add_rim_light(self):
         location = (0, -2 * self.main_object_size, 2)
@@ -55,6 +55,31 @@ class StudioLightsSetup:
         location = (0, self.main_object_size * 2, self.main_object_size / 2)
         self.create_light("SPOT", "Front Spotlight", location, 0, 500, (1, 1, 1), spot_size=1.0, spot_blend=0.1)
 
+    def calculate_scene_sphere_radius(self):
+        """Calculates a sphere radius that contains all the scene objects, excluding cameras and lights."""
+        min_coord = Vector((float('inf'), float('inf'), float('inf')))
+        max_coord = Vector((float('-inf'), float('-inf'), float('-inf')))
+
+        # Iterate through all scene objects
+        for obj in bpy.context.scene.objects:
+            # Skip cameras and lights
+            if obj.type in {'CAMERA', 'LIGHT'}:
+                continue
+
+            # Update the min and max coordinates based on the object's bounding box
+            for corner in obj.bound_box:
+                world_corner = obj.matrix_world @ Vector(corner)
+                min_coord = Vector(map(min, zip(min_coord, world_corner)))
+                max_coord = Vector(map(max, zip(max_coord, world_corner)))
+
+        # Calculate the center and the bounding box's dimensions
+        center = (min_coord + max_coord) / 2
+        dimensions = max_coord - min_coord
+
+        # Calculate the radius as half of the largest dimension
+        radius = max(dimensions) / 2
+
+        return radius
 
 class StudioLightsSetupPanel(bpy.types.Panel):
     bl_label = "Studio Lights Setup"
@@ -76,7 +101,6 @@ class OBJECT_OT_SetupStudioLights(bpy.types.Operator):
     bl_info = 'Studio Lights'
 
     def execute(self, context):
-        main_object_size = 3  # Example size, adjust as needed
         studio_lights = StudioLightsSetup(main_object_size)
         studio_lights.add_key_light()
         studio_lights.add_fill_light()
