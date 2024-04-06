@@ -1,16 +1,43 @@
+import bpy
+from mathutils import Vector
+
 bl_info = {
     "name": "Studio Lights",
     "blender": (2, 80, 0),
     "category": "Scene",
 }
 
+def look_at(obj, target):
+    """
+    Rotates 'obj' to look towards 'target' point.
+    :param obj: The object to be oriented.
+    :param target: The location (as a Vector) to be targeted.
+    """
+    # Direction from the object to the target point
+    direction = target - obj.location
+    # Point the object's '-Z' and 'Y' towards the target
+    rot_quat = direction.to_track_quat('-Z', 'Y')
+    obj.rotation_euler = rot_quat.to_euler()
 
-import bpy
 
-class StudioLightsSetup:
+class StudioLightsSetup():
     def __init__(self, collection_name="StudioLights"):
         self.collection = self.ensure_collection(collection_name)
-        self.main_object_size = calculate_scene_sphere_radius
+        self.cursor_location = bpy.context.scene.cursor.location
+        self.main_object_size = 2 * self.calculate_scene_sphere_radius()
+        self.light_height = 5
+        print('self.main_object_size : ', self.main_object_size )
+
+    def point_light_to_cursor(self, light_name):
+        """
+        Points the light object with the given name towards the 3D cursor.
+        :param light_name: The name of the light object.
+        """
+        # Get the light object by name
+        light = bpy.data.objects.get(light_name)
+        if not light or light.type != 'LIGHT':
+            print(f"No light found with the name '{light_name}'.")
+            return
 
     def ensure_collection(self, collection_name):
         if collection_name not in bpy.data.collections:
@@ -24,6 +51,7 @@ class StudioLightsSetup:
         light.name = name
         light.data.energy = energy
         light.data.color = color
+        self.point_light_to_cursor(light.name)
 
         if light_type == 'AREA':
             light.data.shape = 'DISK'
@@ -87,7 +115,6 @@ class StudioLightsSetupPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'Tool'
-    bl_info = 'Studio Lights'
 
     def draw(self, context):
         layout = self.layout
@@ -98,10 +125,9 @@ class OBJECT_OT_SetupStudioLights(bpy.types.Operator):
     bl_label = "Studio Lights"
     bl_description = "Setup studio lighting based on the selected object size"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_info = 'Studio Lights'
 
     def execute(self, context):
-        studio_lights = StudioLightsSetup(main_object_size)
+        studio_lights = StudioLightsSetup()
         studio_lights.add_key_light()
         studio_lights.add_fill_light()
         studio_lights.add_rim_light()
