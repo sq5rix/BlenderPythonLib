@@ -25,7 +25,7 @@ class StudioLightsSetup():
         self.collection = self.ensure_collection(collection_name)
         self.cursor_location = bpy.context.scene.cursor.location
         self.main_object_size = 2 * self.calculate_scene_sphere_radius()
-        self.light_height = 5
+        self.light_height = 0.8 * self.main_object_size
         print('self.main_object_size : ', self.main_object_size )
 
     def point_light_to_cursor(self, light_name):
@@ -38,6 +38,7 @@ class StudioLightsSetup():
         if not light or light.type != 'LIGHT':
             print(f"No light found with the name '{light_name}'.")
             return
+        look_at(light, self.cursor_location)
 
     def ensure_collection(self, collection_name):
         if collection_name not in bpy.data.collections:
