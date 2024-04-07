@@ -1,0 +1,57 @@
+Let’s try to create an ambitious 
+plugin for blender, called Swarm. 
+Swarm will create a swarm of 
+objects, moving between 
+a set of faces. 
+
+The animation will follow 
+the schema: object will 
+start from a face along 
+the normal, an object origin 
+will be placed on the initial 
+face, object  move up to 
+random height between 
+min and max, 
+and then move to randomly 
+chosen face and land on it 
+parallelly to the normal. 
+
+The object will spend random 
+time on the face and then 
+repeat the takeoff and landing 
+
+the plug in should enable a 
+selection of a set of faces 
+in edit mode and selection 
+of initial object which 
+will be animated. 
+
+Then the object should be 
+instantiated in a given 
+number, which is a plugin 
+parameter. 
+
+Number of animation key frames 
+is another parameter. 
+
+The start of animation should 
+be with all the object placed 
+on randomly selected faces. 
+
+At the end of the nation, 
+all objects should be 
+stationary on the faces. 
+
+The objects should avoid 
+collision with other objects 
+both when flying, and when 
+landing
+
+The plug in parameters: 
+Number of points/objects
+Object 
+Set of faces 
+Minimum and maximum height of fly by
+Minimum and maximum time spent on the face
+Total number of keyframes. 
+Speed of objects. 
