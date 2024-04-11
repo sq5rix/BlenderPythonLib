@@ -3,6 +3,41 @@ from bpy.props import IntProperty, FloatProperty
 from bpy.types import Operator, Panel
 from mathutils import Vector
 
+def create_bezier_curves_between_face_pairs(face_pairs):
+    curve_objects = []  
+    # To store references to the created curve objects
+    # todo reat global faces 
+    for face_data_1, face_data_2 in face_pairs:
+        center1, normal1 = face_data_1
+        center2, normal2 = face_data_2
+        
+        # Calculate handle positions
+        distance = (center1 - center2).length
+        height_factor = 4
+        handle1 = center1 + normal1.normalized() * distance * height_factor
+        handle2 = center2 + normal2.normalized() * distance * height_factor
+
+        # Create and configure the curve
+        curve_data = bpy.data.curves.new(name="BezierCurve", type='CURVE')
+        curve_data.dimensions = '3D'
+        spline = curve_data.splines.new('BEZIER')
+        spline.bezier_points.add(1)
+
+        p0, p1 = spline.bezier_points[0], spline.bezier_points[1]
+        p0.co = center1
+        p0.handle_right_type = 'FREE'
+        p0.handle_right = handle1
+        p1.co = center2
+        p1.handle_left_type = 'FREE'
+        p1.handle_left = handle2
+
+        # Create curve object and add to the scene
+        curve_obj = bpy.data.objects.new("BezierCurveObj", curve_data)
+        bpy.context.scene.collection.objects.link(curve_obj)
+        curve_objects.append(curve_obj)
+    
+    return curve_objects
+
 # Global variable to store the data of selected faces
 GLOBAL_FACE_DATA = []
 
