@@ -1,7 +1,47 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty
 from bpy.types import Operator, Panel
-from mathutils import Vector
+from mathutils import Vector 
+
+def animate_object_along_curve(obj, curve, start_frame, end_frame):
+    # Check if the curve is a valid curve object
+    if curve.type != 'CURVE':
+        print("The provided curve object is not a curve.")
+        return
+
+    # Create or find the Follow Path constraint
+    follow_path_constraint = None
+    for constraint in obj.constraints:
+        if constraint.type == 'FOLLOW_PATH':
+            follow_path_constraint = constraint
+            break
+    else:
+        follow_path_constraint = obj.constraints.new(type='FOLLOW_PATH')
+
+    # Set the curve target and options
+    follow_path_constraint.target = curve
+    follow_path_constraint.use_curve_follow = True
+    follow_path_constraint.forward_axis = 'FORWARD_Y'
+    follow_path_constraint.up_axis = 'UP_Z'
+
+    # Set the object at the start of the curve
+    obj.location = curve.splines[0].bezier_points[0].co
+    obj.keyframe_insert(data_path="location", frame=start_frame)
+
+    # Insert keyframe for the constraint influence
+    follow_path_constraint.offset_factor = 0.0
+    follow_path_constraint.keyframe_insert(data_path="offset_factor", frame=start_frame)
+
+    # Set the object at the end of the curve
+    obj.location = curve.splines[0].bezier_points[-1].co
+    obj.keyframe_insert(data_path="location", frame=end_frame)
+
+    # Insert keyframe for the constraint influence
+    follow_path_constraint.offset_factor = 1.0
+    follow_path_constraint.keyframe_insert(data_path="offset_factor", frame=end_frame)
+
+    print("Animation setup completed.")
+
 
 def create_bezier_curves_between_face_pairs(face_pairs):
     curve_objects = []  
