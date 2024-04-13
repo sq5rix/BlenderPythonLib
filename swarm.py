@@ -2,6 +2,25 @@ import bpy
 from bpy.props import IntProperty, FloatProperty
 from bpy.types import Operator, Panel
 from mathutils import Vector 
+import random
+
+def pair_random_elements(input_list, N):
+    if 2 * N > len(input_list):
+        raise ValueError("N must be less than half the length of the input list")
+    
+    # Randomly select N elements for the first group
+    first_group = random.sample(input_list, N)
+    
+    # Create a list of remaining elements
+    remaining_elements = [item for item in input_list if item not in first_group]
+    
+    # Randomly select N elements from the remaining elements for the second group
+    second_group = random.sample(remaining_elements, N)
+    
+    # Pair elements from the first group with elements from the second group
+    paired_elements = list(zip(first_group, second_group))
+    
+    return paired_elements
 
 def animate_object_along_curve(obj, curve, start_frame, end_frame):
     # Check if the curve is a valid curve object
@@ -149,3 +168,10 @@ def unregister():
 
 if __name__ == "__main__":
     register()
+    
+def test():
+    # Example Usage
+    my_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    N = 3  # Example, must be less than half the length of my_list
+    paired_list = pair_random_elements(my_list, N)
+    print(paired_list)
