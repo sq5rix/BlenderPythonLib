@@ -2,7 +2,40 @@ import bpy
 from bpy.props import IntProperty, FloatProperty
 from bpy.types import Operator, Panel
 from mathutils import Vector 
-import random
+import random 
+
+def distribute_and_animate_objects(obj, curve_list, start_frame, end_frame):
+    # Ensure the input object is a mesh or another appropriate type
+    if obj.type not in ['MESH', 'CURVE', 'SURFACE', 'FONT']:
+        raise TypeError("Unsupported object type. Please use a mesh or curve object.")
+
+    # Loop through each curve in the curve list
+    for curve in curve_list:
+        if curve.type != 'CURVE':
+            print(f"Skipping non-curve object: {curve.name}")
+            continue
+        
+        # Duplicate the object
+        new_obj = obj.copy()
+        new_obj.data = obj.data.copy()
+        bpy.context.collection.objects.link(new_obj)
+        
+        # Create and configure the Follow Path constraint
+        follow_path_constraint = new_obj.constraints.new(type='FOLLOW_PATH')
+        follow_path_constraint.target = curve
+        follow_path_constraint.use_fixed_location = True  # Ensures the object follows the path based on frame
+        follow_path_constraint.use_curve_follow = True  # Make the object's movement tangent to the curve
+        follow_path_constraint.forward_axis = 'FORWARD_Y'  # Assuming the object's forward direction is along Y
+        follow_path_constraint.up_axis = 'UP_Z'  # Assuming Z is up
+        
+        # Set the animation
+        follow_path_constraint.offset_factor = 0.0  # Start at the beginning of the curve
+        follow_path_constraint.keyframe_insert(data_path="offset_factor", frame=start_frame)
+        follow_path_constraint.offset_factor = 1.0  # End at the end of the curve
+        follow_path_constraint.keyframe_insert(data_path="offset_factor", frame=end_frame)
+        
+        print(f"Object {new_obj.name} animated on curve {curve.name} from frame {start_frame} to {end_frame}.")
+
 
 def pair_random_elements(input_list, N):
     if 2 * N > len(input_list):
