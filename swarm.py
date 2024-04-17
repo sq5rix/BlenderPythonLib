@@ -1,8 +1,8 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty
 from bpy.types import Operator, Panel
-from mathutils import Vector 
-import random 
+from mathutils import Vector
+import random
 
 def distribute_and_animate_objects(obj, curve_list, start_frame, end_frame):
     # Ensure the input object is a mesh or another appropriate type
@@ -14,12 +14,12 @@ def distribute_and_animate_objects(obj, curve_list, start_frame, end_frame):
         if curve.type != 'CURVE':
             print(f"Skipping non-curve object: {curve.name}")
             continue
-        
+
         # Duplicate the object
         new_obj = obj.copy()
         new_obj.data = obj.data.copy()
         bpy.context.collection.objects.link(new_obj)
-        
+
         # Create and configure the Follow Path constraint
         follow_path_constraint = new_obj.constraints.new(type='FOLLOW_PATH')
         follow_path_constraint.target = curve
@@ -27,32 +27,32 @@ def distribute_and_animate_objects(obj, curve_list, start_frame, end_frame):
         follow_path_constraint.use_curve_follow = True  # Make the object's movement tangent to the curve
         follow_path_constraint.forward_axis = 'FORWARD_Y'  # Assuming the object's forward direction is along Y
         follow_path_constraint.up_axis = 'UP_Z'  # Assuming Z is up
-        
+
         # Set the animation
         follow_path_constraint.offset_factor = 0.0  # Start at the beginning of the curve
         follow_path_constraint.keyframe_insert(data_path="offset_factor", frame=start_frame)
         follow_path_constraint.offset_factor = 1.0  # End at the end of the curve
         follow_path_constraint.keyframe_insert(data_path="offset_factor", frame=end_frame)
-        
+
         print(f"Object {new_obj.name} animated on curve {curve.name} from frame {start_frame} to {end_frame}.")
 
 
 def pair_random_elements(input_list, N):
     if 2 * N > len(input_list):
         raise ValueError("N must be less than half the length of the input list")
-    
+
     # Randomly select N elements for the first group
     first_group = random.sample(input_list, N)
-    
+
     # Create a list of remaining elements
     remaining_elements = [item for item in input_list if item not in first_group]
-    
+
     # Randomly select N elements from the remaining elements for the second group
     second_group = random.sample(remaining_elements, N)
-    
+
     # Pair elements from the first group with elements from the second group
     paired_elements = list(zip(first_group, second_group))
-    
+
     return paired_elements
 
 def animate_object_along_curve(obj, curve, start_frame, end_frame):
@@ -96,13 +96,13 @@ def animate_object_along_curve(obj, curve, start_frame, end_frame):
 
 
 def create_bezier_curves_between_face_pairs(face_pairs):
-    curve_objects = []  
+    curve_objects = []
     # To store references to the created curve objects
-    # todo reat global faces 
+    # todo reat global faces
     for face_data_1, face_data_2 in face_pairs:
         center1, normal1 = face_data_1
         center2, normal2 = face_data_2
-        
+
         # Calculate handle positions
         distance = (center1 - center2).length
         height_factor = 4
@@ -127,7 +127,7 @@ def create_bezier_curves_between_face_pairs(face_pairs):
         curve_obj = bpy.data.objects.new("BezierCurveObj", curve_data)
         bpy.context.scene.collection.objects.link(curve_obj)
         curve_objects.append(curve_obj)
-    
+
     return curve_objects
 
 # Global variable to store the data of selected faces
@@ -166,15 +166,13 @@ class SWARM_OT_animate(Operator):
     bl_description = "Animate a swarm of objects between selected faces"
     bl_options = {'REGISTER', 'UNDO'}
 
-    number_of_objects: IntProperty(name="Number of Objects", default=10, min=1)
-    min_height: FloatProperty(name="Min Fly Height", default=1.0, min=0.1)
-    max_height: FloatProperty(name="Max Fly Height", default=2.0, min=0.1)
-    min_rest_time: FloatProperty(name="Min Rest Time", default=1.0, min=0.0)
-    max_rest_time: FloatProperty(name="Max Rest Time", default=3.0, min=0.1)
-
     def execute(self, context):
-        # Here, you would implement the logic to animate objects based on GLOBAL_FACE_DATA
-        # and the parameters provided by the user.
+        st = 1
+        en = 20
+        # to do - pass object and create curves from faces
+        obj = bpy.context.scene.objects.get("ObjectName")  # Replace "ObjectName" with your object's name
+        curve = bpy.context.scene.objects.get("CurveName")  # Replace "CurveName" with your curve's name
+        animate_object_along_curve(obj,planes,st,en)
         return {'FINISHED'}
 
 class SWARM_PT_Panel(Panel):
@@ -201,10 +199,11 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-    
+
 def test():
     # Example Usage
     my_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     N = 3  # Example, must be less than half the length of my_list
     paired_list = pair_random_elements(my_list, N)
     print(paired_list)
+
