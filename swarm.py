@@ -171,8 +171,8 @@ class SWARM_OT_animate(Operator):
         en = 20
         # to do - pass object and create curves from faces
         obj = bpy.context.scene.objects.get("ObjectName")  # Replace "ObjectName" with your object's name
-        curve = bpy.context.scene.objects.get("CurveName")  # Replace "CurveName" with your curve's name
-        animate_object_along_curve(obj,planes,st,en)
+        for c in GLOBAL_FACE_DATA:
+            animate_object_along_curve(obj,c,st,en)
         return {'FINISHED'}
 
 class SWARM_PT_Panel(Panel):
