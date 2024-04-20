@@ -22,6 +22,8 @@ Welcome to BPL, the Blender Python Library Wrapper, an open-source project desig
 2. Open Blender
 3. Copy the code in the Scripng scene
 4. Run code - some functions will requre clicking active object 
+5. there are two plugins - camera and compositing - they can be installed in normal way
+6. animate drobe swarm us in progress, not working yet 
 
 pip install bpl is planned. 
 
