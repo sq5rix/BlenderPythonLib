@@ -1,0 +1,15 @@
+Creating a simple Blender plugin to automate the setup of a basic compositing node tree can significantly streamline the post-processing workflow for Blender users. The proposed plugin will add common compositing effects such as denoise, glare, color temperature adjustment, RGB curves, and minimal lens distortion to the scene's compositor node tree.
+
+Here's a breakdown of how to develop this plugin:
+
+### Plugin Structure
+1. **Create an Operator**: This operator will set up the compositing nodes when executed.
+2. **Create a Panel**: The panel will provide a user interface in the compositor context to easily access and execute the operator.
+
+### Explanation
+
+- **Node Setup**: The operator creates a sequence of compositing nodes (denoise, glare, color balance for temperature, RGB curves, lens distortion) and connects them linearly.
+- **UI Panel**: A panel is created in the Node Editor under the Compositor context to easily access the setup operator.
+- **Activation**: The plugin can be activated from the Tool tab in the Node Editor when in Compositor mode.
+
+This basic compositor setup provides a quick starting point for common post-processing tasks, which can be further customized based on specific project needs.
