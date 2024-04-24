@@ -4,8 +4,7 @@ Welcome to BPL, the Blender Python Library Wrapper, an open-source project desig
 
 ## Features
 
-- **Easy 3D Object Creation**: Simplified functions to create and manipulate 3D objects within Blender scenes.
-- **Intuitive Animation Tools**: Streamlined methods for animating objects, making it easier to bring your scenes to life.
+- **set of tools for various operations 
 - **Procedural Material Generation**: High-level functions to create and apply procedural materials to objects, enhancing visual aesthetics with minimal effort.
 - **Advanced Composition Capabilities**: Tools to facilitate complex composition tasks, improving the efficiency of scene setup and rendering.
 - **User-Friendly API**: Designed with usability in mind, providing a clear and concise API that abstracts away the complexities of bpy.
@@ -24,6 +23,8 @@ Welcome to BPL, the Blender Python Library Wrapper, an open-source project desig
 4. Run code - some functions will requre clicking active object 
 5. there are two plugins - camera and compositing - they can be installed in normal way
 6. animate drobe swarm us in progress, not working yet 
+7. snail shell code 
+8. 3D spiral curve
 
 pip install bpl is planned. 
 
