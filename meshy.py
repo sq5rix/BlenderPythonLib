@@ -42,3 +42,15 @@ class OBJECT_OT_send_to_meshy(bpy.types.Operator):
         
         self.report({'INFO'}, "Model imported successfully")
         return {'FINISHED'}
+        
+class OBJECT_PT_meshy_panel(bpy.types.Panel):
+    bl_label = "Meshy AI Integration"
+    bl_idname = "OBJECT_PT_meshy"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "object"
+
+    def draw(self, context):
+        self.layout.operator(OBJECT_OT_send_to_meshy.bl_idname)
+        
+        
