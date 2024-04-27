@@ -53,4 +53,13 @@ class OBJECT_PT_meshy_panel(bpy.types.Panel):
     def draw(self, context):
         self.layout.operator(OBJECT_OT_send_to_meshy.bl_idname)
         
-        
+def register():
+    bpy.utils.register_class(OBJECT_OT_send_to_meshy)
+    bpy.utils.register_class(OBJECT_PT_meshy_panel)
+
+def unregister():
+    bpy.utils.unregister_class(OBJECT_OT_send_to_meshy)
+    bpy.utils.unregister_class(OBJECT_PT_meshy_panel)
+
+if __name__ == "__main__":
+    register()
