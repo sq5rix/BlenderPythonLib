@@ -1,20 +1,12 @@
 import bpy
 import math
-from math import radians, sin, cos
 
 def create_snail_shell(steps, initial_radius, growth_factor, angle_step):
-    # Create a new mesh and object
-    mesh = bpy.data.meshes.new("SnailShell")
-    obj = bpy.data.objects.new("SnailShell", mesh)
-    
-    # Link the object to the scene
-    bpy.context.collection.objects.link(obj)
-    bpy.context.view_layer.objects.active = obj
-    obj.select_set(True)
-
-    # Initialize lists for vertices and faces
-    verts = []
-    faces = []
+    # Create a new curve
+    curve_data = bpy.data.curves.new('SnailShell', type='CURVE')
+    curve_data.dimensions = '3D'
+    spline = curve_data.splines.new('BEZIER')
+    spline.bezier_points.add(steps - 1)
 
     # Variables for the spiral calculation
     radius = initial_radius
@@ -24,27 +16,35 @@ def create_snail_shell(steps, initial_radius, growth_factor, angle_step):
     height_increment = 0.1
     z = 0.0
 
-    # Create vertices in a spiral
-    for i in range(steps):
-        x = radius * cos(angle)
-        y = radius * sin(angle)
-        verts.append((x, y, z))
-        
-        # Update the radius, angle, and height for next step
-        radius += growth_factor
-        angle += radians(angle_step)
-        z += height_increment
-    
-    # Add vertices to mesh
-    mesh.from_pydata(verts, [], [])
+    # Setting points for the spiral
+    for i, point in enumerate(spline.bezier_points):
+        x = radius * math.cos(angle)
+        y = radius * math.sin(angle)
+        point.co = (x, y, z, 1)
+        point.handle_right_type = 'VECTOR'
+        point.handle_left_type = 'VECTOR'
 
-    # Update mesh with new data
-    mesh.update()
-    return obj
+        radius += growth_factor
+        angle += math.radians(angle_step)
+        z += height_increment
+
+    # Create the curve object
+    curve_obj = bpy.data.objects.new('SnailShell', curve_data)
+    bpy.context.collection.objects.link(curve_obj)
+
+    # Convert curve to mesh
+    bpy.context.view_layer.objects.active = curve_obj
+    curve_obj.select_set(True)
+    bpy.ops.object.convert(target='MESH')
+
+    # Apply Solidify modifier
+    solidify = curve_obj.modifiers.new(name='Solidify', type='SOLIDIFY')
+    solidify.thickness = 0.1  # Set the thickness as desired
+
+    # Apply the Solidify modifier
+    bpy.ops.object.modifier_apply(modifier='Solidify')
+
+    return curve_obj
 
 # Example usage
-steps = 100
-initial_radius = 0.5
-growth_factor = 0.1
-angle_step = 10  # degrees per step
-create_snail_shell(steps, initial_radius, growth_factor, angle_step)
+create_snail_shell(100, 0.5, 0.05, 5)
