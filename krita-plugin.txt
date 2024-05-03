@@ -1,0 +1,81 @@
+Creating a Krita plugin to extract colors from all active layers and create a palette involves several steps. First, you'll need to have some familiarity with Krita's scripting API, which allows you to interact with the application using Python.
+
+Below is a high-level outline of how you could create such a plugin:
+
+1. **Setup the Environment:**
+   - Ensure you have Krita installed.
+   - You need to enable Python plugins in Krita. Go to `Settings` -> `Configure Krita` -> `Python Plugin Manager`.
+
+2. **Script Outline:**
+   - Access the active document.
+   - Loop through each layer.
+   - For each layer that is active and visible, extract the colors.
+   - Generate a color palette based on these colors.
+   - Optionally, create a new palette in Krita or export the palette as a file.
+
+3. **Write the Plugin Script:**
+   Here's a basic Python script that you can use as a starting point. This script will need to be placed in Krita's plugins directory.
+
+```python
+from krita import *
+
+class ColorPaletteExtractor(Extension):
+
+    def __init__(self, parent):
+        super().__init__(parent)
+
+    def setup(self):
+        pass
+
+    def createActions(self, window):
+        action = window.createAction("extractPalette", "Extract Palette from Active Layers", "tools/scripts")
+        action.triggered.connect(self.extractPalette)
+
+    def extractPalette(self):
+        doc = Krita.instance().activeDocument()
+        if not doc:
+            QMessageBox.warning(None, "Error", "No active document found!")
+            return
+
+        colors = set()
+        for layer in doc.topLevelNodes():
+            if layer.visible():
+                try:
+                    pixel_data = layer.projectionPixelData(0, 0, layer.width(), layer.height()).data()
+                    # Iterate through each pixel to extract colors
+                    for i in range(0, len(pixel_data), 4):  # RGBA
+                        r = pixel_data[i]
+                        g = pixel_data[i+1]
+                        b = pixel_data[i+2]
+                        a = pixel_data[i+3]
+                        if a > 0:  # Check if pixel is not transparent
+                            colors.add((r, g, b))
+                except Exception as e:
+                    print(f"Error processing layer {layer.name()}: {str(e)}")
+
+        # Create palette from collected colors
+        palette = Palette()
+        palette.setEntryCount(len(colors))
+        for i, color in enumerate(colors):
+            palette.setEntry(i, color[0], color[1], color[2], 255)  # RGB and full alpha
+
+        # Save or use the palette as needed
+        print("Palette extracted with colors:", colors)
+
+# And add the extension to Krita's list of extensions:
+Krita.instance().addExtension(ColorPaletteExtractor(Krita.instance()))
+```
+
+4. **Installation and Usage:**
+   - Save the script as `ColorPaletteExtractor.py`.
+   - Place this file in your Krita plugins folder, usually found at:  
+     - Windows: `C:\Users\[YourUsername]\AppData\Roaming\krita\pykrita`
+     - macOS and Linux: `~/.local/share/krita/pykrita/`
+   - Restart Krita, then enable the plugin through the Python Plugin Manager under `Settings`.
+   - You should now find the "Extract Palette from Active Layers" option under `Tools -> Scripts`.
+
+5. **Testing and Refinement:**
+   - Test the plugin with different documents and layer configurations to ensure it behaves as expected.
+   - Refine the color extraction and palette creation logic as needed, especially to handle large sets of data or specific color management requirements.
+
+This basic plugin will extract colors from all visible layers and print out a set of unique colors found in the document. Adjustments may be needed to match specific project requirements or to enhance functionality.
