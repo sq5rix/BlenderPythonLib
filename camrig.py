@@ -64,7 +64,7 @@ def setup_camera_rig(camera_name, curve_name, target_object_name, initial_focal_
     print("Camera rig setup complete.")
 
 def main():
-    setup_camera_rig("Camera", "CamPath", "Cube", initial_focal_length=80)
+    setup_camera_rig("Camera", "CamPath", "Cube", initial_focal_length=75)
 
 if __name__ == "__main__":
     main()
