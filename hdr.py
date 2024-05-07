@@ -14,7 +14,7 @@ class RenderSettingsManager:
         """Reads the current render settings from the scene and stores them in instance variables."""
         scene = bpy.context.scene
         render = scene.render
-        
+
         self.engine = scene.render.engine
         self.resolution_x = render.resolution_x
         self.resolution_y = render.resolution_y
@@ -46,7 +46,7 @@ def add_denoise_node():
     # Enable use of nodes in the compositor
     bpy.context.scene.use_nodes = True
     tree = bpy.context.scene.node_tree
-    
+
     # Clear existing nodes
     # Comment out the next line if you don't want to remove existing nodes
     # tree.nodes.clear()
@@ -58,7 +58,7 @@ def add_denoise_node():
     # Connect Denoise node to the Render Layers node and Composite node if not already connected
     render_layers_node = next(node for node in tree.nodes if node.type == 'R_LAYERS')
     composite_node = next(node for node in tree.nodes if node.type == 'COMPOSITE')
-    
+
     tree.links.new(render_layers_node.outputs['Image'], denoise_node.inputs['Image'])
     tree.links.new(render_layers_node.outputs['Normal'], denoise_node.inputs['Normal'])
     tree.links.new(render_layers_node.outputs['Albedo'], denoise_node.inputs['Albedo'])
@@ -69,7 +69,7 @@ def add_glare_node():
     # Ensure use of nodes is enabled
     bpy.context.scene.use_nodes = True
     tree = bpy.context.scene.node_tree
-    
+
     # Clear existing nodes
     # Comment out the next line if you don't want to remove existing nodes
     # tree.nodes.clear()
@@ -84,16 +84,16 @@ def add_glare_node():
     render_layers_node = next((node for node in tree.nodes if node.type == 'R_LAYERS'), None)
     denoise_node = next((node for node in tree.nodes if node.type == 'DENOISE'), None)
     composite_node = next(node for node in tree.nodes if node.type == 'COMPOSITE')
-    
+
     if denoise_node:
         tree.links.new(denoise_node.outputs['Image'], glare_node.inputs['Image'])
     else:
         tree.links.new(render_layers_node.outputs['Image'], glare_node.inputs['Image'])
-    
+
     tree.links.new(glare_node.outputs['Image'], composite_node.inputs['Image'])
 
 
-    
+
 def set_render_settings(hres=H_RES, res_percent=RES, engine='CYCLES', device='GPU', denoise=False, blur=True):
     """Configure render settings."""
     bpy.context.scene.render.engine = engine
@@ -148,11 +148,21 @@ def render_scene_and_save_image(output_file_name='Blender/pano'):
 
     #add_denoise_node()
     #add_glare_node()
-    
+
     # Setup nodes to save render output
     setup_nodes_for_render_output(output_file_path)
 
     # Render the scene
     bpy.ops.render.render(write_still=True)  # 'write_still' ensures the File Output node writes the file
 
-render_scene_and_save_image()
+def register():
+    bpy.utils.register_class(CamRigSetupOperator)
+    bpy.types.VIEW3D_MT_object.append(menu_func)
+    render_scene_and_save_image()
+
+def unregister():
+    bpy.utils.unregister_class(CamRigSetupOperator)
+    bpy.types.VIEW3D_MT_object.remove(menu_func)
+
+if __name__ == "__main__":
+    register()
