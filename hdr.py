@@ -1,5 +1,11 @@
 import bpy
 
+bl_info = {
+    "name": "HDR generator",
+    "blender": (2, 80, 0),
+    "category": "Scene",
+}
+
 H_RES = 1024
 RES = 400
 
