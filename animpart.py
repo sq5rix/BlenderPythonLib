@@ -1,4 +1,3 @@
-
 import bpy
 import random
 from mathutils import Vector
