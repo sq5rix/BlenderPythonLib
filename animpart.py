@@ -28,4 +28,17 @@ def create_emission_material(intensity):
 
     return mat
 
+# Main function to create the animation
+def animate_icosphere_in_fog(steps, size, intensity):
+    # Create the icosphere
+    icosphere = create_icosphere(size)
+
+    # Create the emission material and assign it to the icosphere
+    emission_material = create_emission_material(intensity)
+    if len(icosphere.data.materials):
+        icosphere.data.materials[0] = emission_material
+    else:
+        icosphere.data.materials.append(emission_material)
+
+
 
