@@ -83,3 +83,10 @@ def animate_icosphere_in_fog(steps, size, intensity):
         icosphere.location = current_position
         icosphere.keyframe_insert(data_path="location", frame=step * 10)  # 10 frames per step
 
+# Example usage
+animate_icosphere_in_fog(
+    steps=50,         # Number of steps in the animation
+    size=0.1,         # Size of the icosphere
+    intensity=10.0    # Emission intensity
+)
+
