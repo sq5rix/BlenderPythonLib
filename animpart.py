@@ -90,3 +90,6 @@ def main():
         intensity=10.0    # Emission intensity
      )
 
+if __name__ == "__main__":
+    main()
+
