@@ -26,8 +26,6 @@ Welcome to BPL, the Blender Python Library Wrapper, an open-source project desig
 7. snail shell code 
 8. 3D spiral curve
 
-pip install bpl is planned. 
-
 ### Configuration
 
 After installation, BPL does not require additional configuration to start using its features.
