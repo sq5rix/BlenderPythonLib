@@ -4,7 +4,7 @@ Welcome to BPL, the Blender Python Library Wrapper, an open-source project desig
 
 ## Features
 
-- **set of tools for various operations 
+- **set of tools for various operations
 - **Procedural Material Generation**: High-level functions to create and apply procedural materials to objects, enhancing visual aesthetics with minimal effort.
 - **Advanced Composition Capabilities**: Tools to facilitate complex composition tasks, improving the efficiency of scene setup and rendering.
 - **User-Friendly API**: Designed with usability in mind, providing a clear and concise API that abstracts away the complexities of bpy.
@@ -20,18 +20,19 @@ Welcome to BPL, the Blender Python Library Wrapper, an open-source project desig
 1. Download the latest version of BPL from the [GitHub repository](https://github.com/sq5rix/BlenderPythonLibrary).
 2. Open Blender
 3. Copy the code in the Scripng scene
-4. Run code - some functions will requre clicking active object 
+4. Run code - some functions will requre clicking active object
 5. there are two plugins - camera and compositing - they can be installed in normal way
-6. animate drobe swarm us in progress, not working yet 
-7. snail shell code 
+6. animate drobe swarm us in progress, not working yet
+7. snail shell code
 8. 3D spiral curve
+9. mesh3d api
 
 ### Configuration
 
 After installation, BPL does not require additional configuration to start using its features.
 You can add a useful function as a plugin to Blender in the usual way.
 
-## Usage 
+## Usage
 
 ### Creating a 3D Object
 
@@ -93,4 +94,5 @@ BPL is licensed under the MIT License. See the [LICENSE](https://github.com/your
 - The Blender community, for their invaluable contributions and support.
 
 We hope BPL will enhance your Blender scripting experience by providing an easier and more intuitive way to create, animate, and compose in Blender. For questions, feedback, or support, please reach out through our GitHub repository.
+
 
