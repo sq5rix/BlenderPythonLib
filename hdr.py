@@ -13,11 +13,18 @@ import bpy
 
 class RenderSettingsManager:
     def __init__(self):
-        """Initialize the RenderSettingsManager by reading current render settings."""
+        """
+        Initialize the RenderSettingsManager 
+        by reading current render settings.
+        """
         self.get_render()
 
     def get_render(self):
-        """Reads the current render settings from the scene and stores them in instance variables."""
+        """
+        Reads the current render settings 
+        from the scene and stores them in 
+        instance variables.
+        """
         scene = bpy.context.scene
         render = scene.render
 
@@ -48,7 +55,10 @@ class RenderSettingsManager:
 
 
 def add_denoise_node():
-    """Adds a Denoise node to the compositor with default values."""
+    """
+    Adds a Denoise node to the compositor 
+    with default values.
+    """
     # Enable use of nodes in the compositor
     bpy.context.scene.use_nodes = True
     tree = bpy.context.scene.node_tree
@@ -71,7 +81,10 @@ def add_denoise_node():
     tree.links.new(denoise_node.outputs['Image'], composite_node.inputs['Image'])
 
 def add_glare_node():
-    """Adds a Glare node to the compositor with default values."""
+    """
+    Adds a Glare node to the compositor 
+    with default values.
+    """
     # Ensure use of nodes is enabled
     bpy.context.scene.use_nodes = True
     tree = bpy.context.scene.node_tree
@@ -101,7 +114,9 @@ def add_glare_node():
 
 
 def set_render_settings(hres=H_RES, res_percent=RES, engine='CYCLES', device='GPU', denoise=False, blur=True):
-    """Configure render settings."""
+    """
+    Configure render settings.
+    """
     bpy.context.scene.render.engine = engine
     bpy.context.scene.render.resolution_x = 2*hres
     bpy.context.scene.render.resolution_y = hres
@@ -119,7 +134,9 @@ def set_camera_to_panoramic(camera_name='Camera'):
     camera.panorama_type = 'EQUIRECTANGULAR'
 
 def render_scene():
-    """Render the current scene."""
+    """
+    Render the current scene.
+    """
     bpy.ops.render.render()
 
 def setup_nodes_for_render_output(file_path, file_format='HDR'):
@@ -144,7 +161,10 @@ def setup_nodes_for_render_output(file_path, file_format='HDR'):
     tree.links.new(render_layers_node.outputs[0], output_node.inputs[0])
 
 def render_scene_and_save_image(output_file_name='Blender/pano'):
-    """Render the scene and save the image using compositor nodes."""
+    """
+    Render the scene and save the image 
+    using compositor nodes.
+    """
     # Set output file path (relative to the current .blend file)
     output_file_path = f'//{output_file_name}'
 
