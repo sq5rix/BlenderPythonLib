@@ -1,7 +1,9 @@
 import bpy
 
 class COMPOSITOR_OT_setup_basic_nodes(bpy.types.Operator):
-    """Set up basic compositing nodes"""
+    """
+    Set up basic compositing nodes
+    """
     bl_idname = "compositor.setup_basic_nodes"
     bl_label = "Setup Basic Nodes"
     bl_options = {'REGISTER', 'UNDO'}
@@ -60,7 +62,10 @@ class COMPOSITOR_OT_setup_basic_nodes(bpy.types.Operator):
         return {'FINISHED'}
 
 class COMPOSITOR_PT_custom_panel(bpy.types.Panel):
-    """Creates a Panel in the Compositor context"""
+    """
+    Creates a Panel in the Compositor 
+    context
+    """
     bl_label = "Basic Compositor Setup"
     bl_idname = "COMPOSITOR_PT_custom_panel"
     bl_space_type = 'NODE_EDITOR'
