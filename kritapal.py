@@ -43,5 +43,9 @@ class ColorPaletteExtractor(Extension):
         # Save or use the palette as needed
         print("Palette extracted with colors:", colors)
 
-# And add the extension to Krita's list of extensions:
-Krita.instance().addExtension(ColorPaletteExtractor(Krita.instance()))
+def main():
+    Krita.instance().addExtension(ColorPaletteExtractor(Krita.instance()))
+
+if __name__ == "__main__":
+    main()
+
