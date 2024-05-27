@@ -34,12 +34,14 @@ def add_volume_light_probe(cube, resolution_x=4, resolution_y=4, resolution_z=4,
 
     return light_probe
 
-# Example usage
-# First, create the scene bounding cube (assuming the create_scene_bounding_cube function is defined)
-cube = create_scene_bounding_cube()
+def main():
+    # Example usage
+    # First, create the scene bounding cube (assuming the create_scene_bounding_cube function is defined)
+    cube = create_scene_bounding_cube()
+    # Then, add a volume light probe based on this cube
+    volume_light_probe = add_volume_light_probe(cube, resolution_x=8, resolution_y=8, resolution_z=8, falloff=0.75, bleed_bias=0.1)
+    print(f"Added {volume_light_probe.name} to the scene.")
 
-# Then, add a volume light probe based on this cube
-volume_light_probe = add_volume_light_probe(cube, resolution_x=8, resolution_y=8, resolution_z=8, falloff=0.75, bleed_bias=0.1)
 
-print(f"Added {volume_light_probe.name} to the scene.")
-
+if __name__ == "__main__":
+    main()
