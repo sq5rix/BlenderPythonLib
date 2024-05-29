@@ -38,10 +38,14 @@ def create_spiral(initial_diameter, turns, height, diameter_growth_percent):
 
     return curve_obj
 
-# Example usage
-initial_diameter = 1.0
-turns = 5
-height = 5.0
-diameter_growth_percent = 10.0
+def main():
+    # Example usage
+    initial_diameter = 1.0
+    turns = 5
+    height = 5.0
+    diameter_growth_percent = 10.0
 
-create_spiral(initial_diameter, turns, height, diameter_growth_percent)
+    create_spiral(initial_diameter, turns, height, diameter_growth_percent)
+
+if __name__ == "__main__":
+    main()
