@@ -52,7 +52,10 @@ def create_l_shaped_pipe(plane_size=2, bevel_segments=8, curve_depth=0.5, curve_
     pipe.name = "Pipe"
 
     return pipe
+    
+    
+def main():
+    pipe = create_l_shaped_pipe(plane_size=2, bevel_segments=8, curve_depth=0.25, curve_resolution=4)
 
-# Example usage
-pipe = create_l_shaped_pipe(plane_size=2, bevel_segments=8, curve_depth=0.25, curve_resolution=4)
-
+if __name__ == "__main__":
+    main()
